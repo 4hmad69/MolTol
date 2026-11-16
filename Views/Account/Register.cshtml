@@ -1,0 +1,127 @@
+﻿@{
+    ViewData["Title"] = "Sign Up";
+}
+
+@await Html.PartialAsync("_AuthNavbar")
+
+<section class="auth-section">
+
+    <div class="container">
+
+        <div class="row justify-content-center">
+
+            <div class="col-md-8 col-lg-6">
+
+                <div class="auth-card">
+
+                    <div class="text-center mb-4">
+
+                        <div class="category-icon mx-auto">
+                            <i class="bi bi-person-plus"></i>
+                        </div>
+
+                        <h2 class="auth-title">Create Your Account</h2>
+
+                        <p class="text-secondary">
+                            Join MolTol and start comparing local market prices.
+                        </p>
+
+                    </div>
+
+                    <form method="post" asp-controller="Account" asp-action="Register">
+
+                        <div class="mb-3">
+
+                            <label for="fullName" class="form-label">Full Name</label>
+
+                            <input type="text"
+                                   id="fullName"
+                                   name="FullName"
+                                   class="form-control"
+                                   placeholder="Enter your full name"
+                                   required>
+
+                        </div>
+
+                        <div class="mb-3">
+
+                            <label for="email" class="form-label">Email Address</label>
+
+                            <input type="email"
+                                   id="email"
+                                   name="Email"
+                                   class="form-control"
+                                   placeholder="Enter your email address"
+                                   required>
+
+                        </div>
+
+                        <div class="mb-3">
+
+                            <label for="password" class="form-label">Password</label>
+
+                            <input type="password"
+                                   id="password"
+                                   name="Password"
+                                   class="form-control"
+                                   placeholder="Create a password"
+                                   required>
+
+                        </div>
+
+                        <div class="mb-3">
+
+                            <label for="confirmPassword" class="form-label">Confirm Password</label>
+
+                            <input type="password"
+                                   id="confirmPassword"
+                                   name="ConfirmPassword"
+                                   class="form-control"
+                                   placeholder="Confirm your password"
+                                   required>
+
+                        </div>
+
+                        <div class="form-check mb-4">
+
+                            <input type="checkbox"
+                                   class="form-check-input"
+                                   id="terms"
+                                   name="AcceptTerms"
+                                   value="true"
+                                   required>
+
+                            <label class="form-check-label small" for="terms">
+                                I agree to the terms and conditions.
+                            </label>
+
+                        </div>
+
+                        <button type="submit" class="btn btn-primary-custom w-100">
+                            Create Account
+                        </button>
+
+                    </form>
+
+                    <div class="text-center mt-4">
+
+                        <p class="small text-secondary mb-1">
+                            Already have an account?
+                        </p>
+
+                        <a asp-controller="Account" asp-action="Login"
+                           class="fw-semibold text-decoration-none">
+                            Login Here
+                        </a>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</section>

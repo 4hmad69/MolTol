@@ -1,0 +1,42 @@
+﻿
+<nav class="navbar navbar-expand-lg sticky-top">
+    <div class="container">
+
+        <a class="navbar-brand" asp-controller="Home" asp-action="Index">
+            MolTol<span class="brand-dot">.</span>
+        </a>
+
+        <button class="navbar-toggler" type="button"
+                data-bs-toggle="collapse" data-bs-target="#mainNavbar">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <div class="collapse navbar-collapse" id="mainNavbar">
+
+            <ul class="navbar-nav mx-auto">
+                <li class="nav-item">
+                    <a class="nav-link active" asp-controller="Home" asp-action="Index">Home</a>
+                </li>
+
+                <li class="nav-item">
+                    <a class="nav-link" href="#categories">Categories</a>
+                </li>
+
+                <li class="nav-item">
+                    <a class="nav-link" href="#prices">Compare Prices</a>
+                </li>
+            </ul>
+
+            <div class="d-flex gap-2">
+                <a asp-controller="Account" asp-action="Login" class="btn btn-outline-custom">
+                    Login
+                </a>
+
+                <a asp-controller="Account" asp-action="Register" class="btn btn-primary-custom">
+                    Sign Up
+                </a>
+            </div>
+
+        </div>
+    </div>
+</nav>

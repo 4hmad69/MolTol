@@ -1,0 +1,65 @@
+﻿
+<nav class="navbar navbar-expand-lg sticky-top">
+
+    <div class="container">
+
+        <a class="navbar-brand" asp-controller="User" asp-action="Index">
+            MolTol<span class="brand-dot">.</span>
+        </a>
+
+        <button class="navbar-toggler" type="button"
+                data-bs-toggle="collapse" data-bs-target="#userNavbar">
+
+            <span class="navbar-toggler-icon"></span>
+
+        </button>
+
+        <div class="collapse navbar-collapse" id="userNavbar">
+
+            <ul class="navbar-nav mx-auto">
+
+                <li class="nav-item">
+                    <a class="nav-link active" asp-controller="User" asp-action="Index">
+                        Dashboard
+                    </a>
+                </li>
+
+                <li class="nav-item">
+                    <a class="nav-link" href="#report-price">
+                        Report Price
+                    </a>
+                </li>
+
+                <li class="nav-item">
+                    <a class="nav-link" href="#shop-suggestion">
+                        Suggest Shop
+                    </a>
+                </li>
+
+                <li class="nav-item">
+                    <a class="nav-link" href="#history">
+                        Report History
+                    </a>
+                </li>
+
+            </ul>
+
+            <div class="d-flex align-items-center gap-3">
+
+                <span class="fw-semibold text-primary">
+                    <i class="bi bi-person-circle me-1"></i>
+                    User
+                </span>
+
+                <a asp-controller="Home" asp-action="Index"
+                   class="btn btn-outline-custom">
+                    Home
+                </a>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</nav>

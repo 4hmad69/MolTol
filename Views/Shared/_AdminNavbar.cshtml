@@ -1,0 +1,74 @@
+﻿
+<nav class="navbar navbar-expand-lg sticky-top">
+
+    <div class="container">
+
+        <a class="navbar-brand" asp-controller="Admin" asp-action="Index">
+            MolTol<span class="brand-dot">.</span>
+            <span class="badge bg-primary ms-1" style="font-size: 10px;">
+                ADMIN
+            </span>
+        </a>
+
+        <button class="navbar-toggler" type="button"
+                data-bs-toggle="collapse" data-bs-target="#adminNavbar">
+
+            <span class="navbar-toggler-icon"></span>
+
+        </button>
+
+        <div class="collapse navbar-collapse" id="adminNavbar">
+
+            <ul class="navbar-nav mx-auto">
+
+                <li class="nav-item">
+                    <a class="nav-link active" asp-controller="Admin" asp-action="Index">
+                        Dashboard
+                    </a>
+                </li>
+
+                <li class="nav-item">
+                    <a class="nav-link" href="#products">
+                        Products
+                    </a>
+                </li>
+
+                <li class="nav-item">
+                    <a class="nav-link" href="#categories">
+                        Categories
+                    </a>
+                </li>
+
+                <li class="nav-item">
+                    <a class="nav-link" href="#areas">
+                        Areas
+                    </a>
+                </li>
+
+                <li class="nav-item">
+                    <a class="nav-link" href="#reports">
+                        Reports
+                    </a>
+                </li>
+
+            </ul>
+
+            <div class="d-flex align-items-center gap-3">
+
+                <span class="fw-semibold text-primary">
+                    <i class="bi bi-shield-lock me-1"></i>
+                    Administrator
+                </span>
+
+                <a asp-controller="Home" asp-action="Index"
+                   class="btn btn-outline-custom">
+                    Home
+                </a>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</nav>
