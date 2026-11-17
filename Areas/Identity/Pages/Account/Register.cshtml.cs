@@ -117,7 +117,11 @@ public class RegisterModel : PageModel
         if (ModelState.IsValid)
         {
             var user = CreateUser();
+            user.UserName = Input.Email;
+            user.Email = Input.Email;
             user.FullName = Input.FullName;
+
+           
 
             await _userStore.SetUserNameAsync(user, Input.Email, CancellationToken.None);
             await _emailStore.SetEmailAsync(user, Input.Email, CancellationToken.None);
@@ -125,6 +129,18 @@ public class RegisterModel : PageModel
 
             if (result.Succeeded)
             {
+                var roleResult = await _userManager.AddToRoleAsync(user, "User");
+
+                if (!roleResult.Succeeded)
+                {
+                    foreach (var error in roleResult.Errors)
+                    {
+                        ModelState.AddModelError(string.Empty, error.Description);
+                    }
+
+                    await _userManager.DeleteAsync(user);
+                    return Page();
+                }
                 _logger.LogInformation("User created a new account with password.");
 
                 var userId = await _userManager.GetUserIdAsync(user);
