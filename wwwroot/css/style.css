@@ -294,3 +294,38 @@ body {
         padding: 45px 0;
     }
 }
+
+.auth-card {
+    width: 100%;
+    max-width: 520px;
+}
+
+.auth-link {
+    color: var(--secondary);
+    text-decoration: none;
+}
+
+    .auth-link:hover {
+        color: var(--primary);
+        text-decoration: underline;
+    }
+
+.auth-secondary-link {
+    color: var(--muted);
+    font-size: 14px;
+    text-decoration: none;
+}
+
+    .auth-secondary-link:hover {
+        color: var(--secondary);
+    }
+
+.auth-card .form-check-input:checked {
+    background-color: var(--secondary);
+    border-color: var(--secondary);
+}
+
+.auth-card .text-danger {
+    font-size: 13px;
+}
+
