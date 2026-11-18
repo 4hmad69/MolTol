@@ -1,6 +1,5 @@
 ﻿
 <nav class="navbar navbar-expand-lg sticky-top">
-
     <div class="container">
 
         <a class="navbar-brand" asp-controller="User" asp-action="Index">
@@ -9,9 +8,7 @@
 
         <button class="navbar-toggler" type="button"
                 data-bs-toggle="collapse" data-bs-target="#userNavbar">
-
             <span class="navbar-toggler-icon"></span>
-
         </button>
 
         <div class="collapse navbar-collapse" id="userNavbar">
@@ -48,7 +45,7 @@
 
                 <span class="fw-semibold text-primary">
                     <i class="bi bi-person-circle me-1"></i>
-                    User
+                    @User.Identity?.Name
                 </span>
 
                 <a asp-controller="Home" asp-action="Index"
@@ -56,10 +53,17 @@
                     Home
                 </a>
 
+                <form asp-area="Identity" asp-page="/Account/Logout"
+                      asp-route-returnUrl="/"
+                      method="post">
+                    <button type="submit" class="btn btn-primary-custom">
+                        Logout
+                    </button>
+                </form>
+
             </div>
 
         </div>
 
     </div>
-
 </nav>

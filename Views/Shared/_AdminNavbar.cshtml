@@ -12,9 +12,7 @@
 
         <button class="navbar-toggler" type="button"
                 data-bs-toggle="collapse" data-bs-target="#adminNavbar">
-
             <span class="navbar-toggler-icon"></span>
-
         </button>
 
         <div class="collapse navbar-collapse" id="adminNavbar">
@@ -57,13 +55,21 @@
 
                 <span class="fw-semibold text-primary">
                     <i class="bi bi-shield-lock me-1"></i>
-                    Administrator
+                    @User.Identity?.Name
                 </span>
 
                 <a asp-controller="Home" asp-action="Index"
                    class="btn btn-outline-custom">
                     Home
                 </a>
+
+                <form asp-area="Identity" asp-page="/Account/Logout"
+                      asp-route-returnUrl="/"
+                      method="post">
+                    <button type="submit" class="btn btn-primary-custom">
+                        Logout
+                    </button>
+                </form>
 
             </div>
 
