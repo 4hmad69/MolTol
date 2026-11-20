@@ -1,3 +1,4 @@
+
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using MolTol.Data;
@@ -15,11 +16,12 @@ builder.Services
     {
         options.SignIn.RequireConfirmedAccount = false;
         options.User.AllowedUserNameCharacters =
-        "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-._@+";
+            "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-._@+";
     })
     .AddRoles<IdentityRole>()
     .AddEntityFrameworkStores<ApplicationDbContext>();
 
+builder.Services.AddSingleton<SqlConnectionFactory>();
 
 builder.Services.AddControllersWithViews();
 builder.Services.AddRazorPages();
