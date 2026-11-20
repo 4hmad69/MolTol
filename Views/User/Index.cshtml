@@ -1,13 +1,13 @@
-﻿@{
+﻿@model MolTol.Models.ViewModels.UserDashboardViewModel
+
+@{
     ViewData["Title"] = "User Dashboard";
 }
 
 @await Html.PartialAsync("_UserNavbar")
 
 <section class="dashboard-header">
-
     <div class="container">
-
         <h2 class="dashboard-title">
             Welcome Back, @User.Identity?.Name!
         </h2>
@@ -15,81 +15,45 @@
         <p class="text-secondary mb-0">
             Manage your price contributions and explore MolTol.
         </p>
-
     </div>
-
 </section>
 
 <section class="section-padding">
-
     <div class="container">
 
-        <h4 class="fw-bold mb-4 text-primary">
-            Your Overview
-        </h4>
+        <h4 class="fw-bold mb-4 text-primary">Your Overview</h4>
 
         <div class="row g-4">
-
             <div class="col-12 col-md-4">
-
                 <div class="stat-card">
-
                     <i class="bi bi-file-earmark-text dashboard-icon"></i>
-
-                    <div class="stat-number mt-3">12</div>
-
-                    <div class="stat-label">
-                        Total Price Reports
-                    </div>
-
+                    <div class="stat-number mt-3">@Model.TotalReports</div>
+                    <div class="stat-label">Total Price Reports</div>
                 </div>
-
             </div>
 
             <div class="col-12 col-md-4">
-
                 <div class="stat-card">
-
                     <i class="bi bi-check-circle dashboard-icon"></i>
-
-                    <div class="stat-number mt-3">9</div>
-
-                    <div class="stat-label">
-                        Approved Reports
-                    </div>
-
+                    <div class="stat-number mt-3">@Model.ApprovedReports</div>
+                    <div class="stat-label">Approved Reports</div>
                 </div>
-
             </div>
 
             <div class="col-12 col-md-4">
-
                 <div class="stat-card">
-
                     <i class="bi bi-clock-history dashboard-icon"></i>
-
-                    <div class="stat-number mt-3">3</div>
-
-                    <div class="stat-label">
-                        Pending Reports
-                    </div>
-
+                    <div class="stat-number mt-3">@Model.PendingReports</div>
+                    <div class="stat-label">Pending Reports</div>
                 </div>
-
             </div>
-
         </div>
 
-        <h4 class="fw-bold mt-5 mb-4 text-primary">
-            Quick Actions
-        </h4>
+        <h4 class="fw-bold mt-5 mb-4 text-primary">Quick Actions</h4>
 
         <div class="row g-4">
-
             <div class="col-md-6">
-
                 <div class="custom-card" id="report-price">
-
                     <div class="category-icon">
                         <i class="bi bi-tag"></i>
                     </div>
@@ -104,15 +68,11 @@
                     <a href="#report-price-form" class="btn btn-primary-custom">
                         Report Price
                     </a>
-
                 </div>
-
             </div>
 
             <div class="col-md-6">
-
                 <div class="custom-card" id="shop-suggestion">
-
                     <div class="category-icon">
                         <i class="bi bi-shop"></i>
                     </div>
@@ -127,137 +87,105 @@
                     <a href="#shop-suggestion-form" class="btn btn-outline-custom">
                         Suggest Shop
                     </a>
-
                 </div>
-
             </div>
-
         </div>
 
         <div class="custom-card mt-4" id="report-price-form">
-
             <h5 class="fw-bold text-primary mb-3">
                 <i class="bi bi-tag me-2"></i>
                 Price Report Form
             </h5>
 
-            <form>
-
+            <form id="priceReportForm">
+                @Html.AntiForgeryToken()
                 <div class="row g-3">
-
                     <div class="col-md-6">
+                        <label for="productId" class="form-label">Product Name</label>
 
-                        <label class="form-label">Product Name</label>
-
-                        <select class="form-select">
-                            <option selected disabled>Select product</option>
-                            <option>Wheat Flour</option>
-                            <option>Sugar</option>
-                            <option>Cooking Oil</option>
-                            <option>Chicken</option>
+                        <select id="productId" name="productId" class="form-select" required>
+                            <option value="">Select product</option>
+                            @foreach (var product in Model.Products)
+                            {
+                                <option value="@product.ProductId">
+                                    @product.Name (@product.Unit)
+                                </option>
+                            }
                         </select>
-
                     </div>
 
                     <div class="col-md-6">
+                        <label for="shopId" class="form-label">Shop Name</label>
 
-                        <label class="form-label">Shop Name</label>
-
-                        <input type="text" class="form-control"
-                               placeholder="Enter shop name">
-
-                    </div>
-
-                    <div class="col-md-6">
-
-                        <label class="form-label">Area</label>
-
-                        <select class="form-select">
-                            <option selected disabled>Select area</option>
-                            <option>Johar Town</option>
-                            <option>Model Town</option>
-                            <option>Garden Town</option>
-                            <option>Gulberg</option>
+                        <select id="shopId" name="shopId" class="form-select" required>
+                            <option value="">Select approved shop</option>
+                            @foreach (var shop in Model.Shops)
+                            {
+                                <option value="@shop.ShopId">@shop.Name</option>
+                            }
                         </select>
-
                     </div>
 
                     <div class="col-md-6">
+                        <label for="reportPrice" class="form-label">Price (PKR)</label>
 
-                        <label class="form-label">Price (PKR)</label>
-
-                        <input type="number" class="form-control"
-                               placeholder="Enter product price">
-
+                        <input type="number"
+                               id="reportPrice"
+                               name="price"
+                               class="form-control"
+                               min="0.01"
+                               step="0.01"
+                               placeholder="Enter product price"
+                               required />
                     </div>
 
                     <div class="col-12">
-
-                        <button type="button" class="btn btn-primary-custom">
+                        <button type="button" id="submitPriceReport"
+                                class="btn btn-primary-custom">
                             Submit Price Report
                         </button>
-
                     </div>
-
                 </div>
-
             </form>
-
+            <div id="priceReportMessage" class="mt-3" role="alert"></div>
         </div>
 
         <div class="custom-card mt-4" id="shop-suggestion-form">
-
             <h5 class="fw-bold text-primary mb-3">
                 <i class="bi bi-shop me-2"></i>
                 Suggest a Local Shop
             </h5>
 
             <form>
-
                 <div class="row g-3">
-
                     <div class="col-md-6">
-
                         <label class="form-label">Shop Name</label>
 
                         <input type="text" class="form-control"
-                               placeholder="Enter shop name">
-
+                               placeholder="Enter shop name" />
                     </div>
 
                     <div class="col-md-6">
-
                         <label class="form-label">Area</label>
 
                         <input type="text" class="form-control"
-                               placeholder="Enter shop area">
-
+                               placeholder="Enter shop area" />
                     </div>
 
                     <div class="col-12">
-
                         <button type="button" class="btn btn-primary-custom">
                             Submit Shop Suggestion
                         </button>
-
                     </div>
-
                 </div>
-
             </form>
-
         </div>
 
         <div class="custom-card mt-5" id="history">
-
-            <h4 class="fw-bold text-primary mb-4">
-                My Report History
-            </h4>
+            <h4 class="fw-bold text-primary mb-4">My Report History</h4>
 
             <div class="table-responsive">
-
                 <table class="table align-middle">
-
                     <thead>
                         <tr>
                             <th>Product</th>
@@ -269,59 +197,50 @@
                     </thead>
 
                     <tbody>
-
-                        <tr>
-                            <td>Wheat Flour</td>
-                            <td>City Mart</td>
-                            <td>Rs. 150</td>
-                            <td>08 Nov 2026</td>
-                            <td>
-                                <span class="badge status-approved">
-                                    Approved
-                                </span>
-                            </td>
-                        </tr>
-
-                        <tr>
-                            <td>Sugar</td>
-                            <td>Local Store</td>
-                            <td>Rs. 175</td>
-                            <td>09 Nov 2026</td>
-                            <td>
-                                <span class="badge status-pending">
-                                    Pending
-                                </span>
-                            </td>
-                        </tr>
-
-                        <tr>
-                            <td>Cooking Oil</td>
-                            <td>Fresh Mart</td>
-                            <td>Rs. 560</td>
-                            <td>10 Nov 2026</td>
-                            <td>
-                                <span class="badge status-approved">
-                                    Approved
-                                </span>
-                            </td>
-                        </tr>
-
+                        @if (Model.ReportHistory.Any())
+                        {
+                            @foreach (var report in Model.ReportHistory)
+                            {
+                                <tr>
+                                    <td>@report.ProductName</td>
+                                    <td>@report.ShopName</td>
+                                    <td>Rs. @report.Price.ToString("N2")</td>
+                                    <td>@report.ReportDate.ToString("dd MMM yyyy")</td>
+                                    <td>
+                                        @if (report.Status == "Approved")
+                                        {
+                                            <span class="badge status-approved">Approved</span>
+                                        }
+                                        else if (report.Status == "Pending")
+                                        {
+                                            <span class="badge status-pending">Pending</span>
+                                        }
+                                        else
+                                        {
+                                            <span class="badge bg-danger">@report.Status</span>
+                                        }
+                                    </td>
+                                </tr>
+                            }
+                        }
+                        else
+                        {
+                            <tr>
+                                <td colspan="5" class="text-center text-secondary">
+                                    You haven't submitted any price reports yet.
+                                </td>
+                            </tr>
+                        }
                     </tbody>
-
                 </table>
-
             </div>
-
         </div>
 
     </div>
-
 </section>
 
 <footer class="footer">
-
     <div class="container text-center">
-
         <h5 class="fw-bold">
             MolTol<span class="brand-dot">.</span>
         </h5>
@@ -333,7 +252,62 @@
         <p class="small mt-3">
             &copy; @DateTime.Now.Year MolTol. All Rights Reserved.
         </p>
-
     </div>
-
 </footer>
+@section Scripts {
+    <script>
+        const priceReportForm = document.getElementById("priceReportForm");
+        const submitPriceReport = document.getElementById("submitPriceReport");
+        const priceReportMessage = document.getElementById("priceReportMessage");
+
+        submitPriceReport.addEventListener("click", async () => {
+            if (!priceReportForm.reportValidity()) {
+                return;
+            }
+
+            const token = priceReportForm.querySelector(
+                'input[name="__RequestVerificationToken"]'
+            ).value;
+
+            const formData = new FormData(priceReportForm);
+
+            submitPriceReport.disabled = true;
+            submitPriceReport.textContent = "Submitting...";
+            priceReportMessage.textContent = "";
+
+            try {
+                const response = await fetch(
+                    '@Url.Action("SubmitPriceReport", "User")',
+                    {
+                        method: "POST",
+                        headers: {
+                            "RequestVerificationToken": token
+                        },
+                        body: formData
+                    }
+                );
+
+                const result = await response.json();
+
+                if (!response.ok) {
+                    throw new Error(result.message || "Unable to submit report.");
+                }
+
+                priceReportMessage.className = "alert alert-success mt-3";
+                priceReportMessage.textContent = result.message;
+
+                priceReportForm.reset();
+
+                setTimeout(() => {
+                    window.location.reload();
+                }, 1200);
+            } catch (error) {
+                priceReportMessage.className = "alert alert-danger mt-3";
+                priceReportMessage.textContent = error.message;
+            } finally {
+                submitPriceReport.disabled = false;
+                submitPriceReport.textContent = "Submit Price Report";
+            }
+        });
+    </script>
+}

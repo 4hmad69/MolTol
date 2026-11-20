@@ -40,4 +40,7 @@ public interface IPriceReportRepository
         int? areaId = null,
         string? searchTerm = null,
         CancellationToken cancellationToken = default);
+    Task<IReadOnlyList<UserPriceReportItem>> GetUserReportHistoryAsync(
+    string userId,
+    CancellationToken cancellationToken = default);
 }

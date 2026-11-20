@@ -242,5 +242,34 @@ public class PriceReportRepository : IPriceReportRepository
 
         return results.ToList();
     }
+    public async Task<IReadOnlyList<UserPriceReportItem>> GetUserReportHistoryAsync(
+    string userId,
+    CancellationToken cancellationToken = default)
+    {
+        const string sql = """
+        SELECT
+            pr.ReportId,
+            p.Name AS ProductName,
+            s.Name AS ShopName,
+            pr.Price,
+            pr.ReportDate,
+            pr.Status
+        FROM PriceReports pr
+        INNER JOIN Products p ON pr.ProductId = p.ProductId
+        INNER JOIN Shops s ON pr.ShopId = s.ShopId
+        WHERE pr.UserId = @UserId
+        ORDER BY pr.ReportDate DESC;
+        """;
+
+        await using var connection = _connectionFactory.CreateConnection();
+
+        var reports = await connection.QueryAsync<UserPriceReportItem>(
+            new CommandDefinition(
+                sql,
+                new { UserId = userId },
+                cancellationToken: cancellationToken));
+
+        return reports.ToList();
+    }
 
 }
