@@ -8,4 +8,5 @@ public class Shop
     public int AreaId { get; set; }
     public string Status { get; set; } = "Pending";
     public DateTime CreatedAt { get; set; }
+    public string? SuggestedByUserId { get; set; }
 }

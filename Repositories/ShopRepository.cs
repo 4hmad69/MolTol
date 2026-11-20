@@ -21,7 +21,7 @@ public class ShopRepository : IShopRepository
         CancellationToken cancellationToken = default)
     {
         const string sql = """
-            SELECT ShopId, Name, AreaId, Status, CreatedAt
+            SELECT ShopId, Name, AreaId, Status, CreatedAt, SuggestedByUserId
             FROM Shops
             WHERE (@AreaId IS NULL OR AreaId = @AreaId)
               AND (@Status IS NULL OR Status = @Status)
@@ -50,7 +50,7 @@ public class ShopRepository : IShopRepository
         CancellationToken cancellationToken = default)
     {
         const string sql = """
-            SELECT ShopId, Name, AreaId, Status, CreatedAt
+            SELECT ShopId, Name, AreaId, Status, CreatedAt, SuggestedByUserId
             FROM Shops
             WHERE ShopId = @ShopId;
             """;
@@ -69,8 +69,8 @@ public class ShopRepository : IShopRepository
         CancellationToken cancellationToken = default)
     {
         const string sql = """
-            INSERT INTO Shops (Name, AreaId, Status)
-            VALUES (@Name, @AreaId, 'Pending');
+            INSERT INTO Shops (Name, AreaId, Status, SuggestedByUserId)
+            VALUES (@Name, @AreaId, 'Pending', @SuggestedByUserId);
 
             SELECT CAST(SCOPE_IDENTITY() AS INT);
             """;
@@ -83,7 +83,8 @@ public class ShopRepository : IShopRepository
                 new
                 {
                     shop.Name,
-                    shop.AreaId
+                    shop.AreaId,
+                    shop.SuggestedByUserId
                 },
                 cancellationToken: cancellationToken));
     }
@@ -111,15 +112,23 @@ public class ShopRepository : IShopRepository
     }
 
     public async Task<bool> UpdateStatusAsync(
-        int shopId,
-        string status,
-        CancellationToken cancellationToken = default)
+    int shopId,
+    string status,
+    CancellationToken cancellationToken = default)
     {
+        if (status is not ("Approved" or "Rejected"))
+        {
+            throw new ArgumentException(
+                "Status must be Approved or Rejected.",
+                nameof(status));
+        }
+
         const string sql = """
-            UPDATE Shops
-            SET Status = @Status
-            WHERE ShopId = @ShopId;
-            """;
+        UPDATE Shops
+        SET Status = @Status
+        WHERE ShopId = @ShopId
+          AND Status = 'Pending';
+        """;
 
         await using var connection = _connectionFactory.CreateConnection();
 

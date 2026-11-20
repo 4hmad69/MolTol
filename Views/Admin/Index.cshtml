@@ -1,13 +1,13 @@
-﻿@{
+﻿@model MolTol.Models.ViewModels.AdminDashboardViewModel
+
+@{
     ViewData["Title"] = "Admin Dashboard";
 }
 
 @await Html.PartialAsync("_AdminNavbar")
 
 <section class="dashboard-header">
-
     <div class="container">
-
         <h2 class="dashboard-title">
             Admin Dashboard
         </h2>
@@ -15,13 +15,10 @@
         <p class="text-secondary mb-0">
             Manage MolTol's products, categories, areas and user reports.
         </p>
-
     </div>
-
 </section>
 
 <section class="section-padding">
-
     <div class="container">
 
         <h4 class="fw-bold text-primary mb-4">
@@ -31,59 +28,35 @@
         <div class="row g-4">
 
             <div class="col-6 col-lg-3">
-
                 <div class="stat-card">
-
                     <i class="bi bi-box-seam dashboard-icon"></i>
-
-                    <div class="stat-number mt-3">48</div>
-
+                    <div class="stat-number mt-3">@Model.TotalProducts</div>
                     <div class="stat-label">Products</div>
-
                 </div>
-
             </div>
 
             <div class="col-6 col-lg-3">
-
                 <div class="stat-card">
-
                     <i class="bi bi-grid dashboard-icon"></i>
-
-                    <div class="stat-number mt-3">8</div>
-
+                    <div class="stat-number mt-3">@Model.TotalCategories</div>
                     <div class="stat-label">Categories</div>
-
                 </div>
-
             </div>
 
             <div class="col-6 col-lg-3">
-
                 <div class="stat-card">
-
                     <i class="bi bi-geo-alt dashboard-icon"></i>
-
-                    <div class="stat-number mt-3">12</div>
-
+                    <div class="stat-number mt-3">@Model.TotalAreas</div>
                     <div class="stat-label">Areas</div>
-
                 </div>
-
             </div>
 
             <div class="col-6 col-lg-3">
-
                 <div class="stat-card">
-
                     <i class="bi bi-clock-history dashboard-icon"></i>
-
-                    <div class="stat-number mt-3">7</div>
-
+                    <div class="stat-number mt-3" id="pendingReportsCount">@Model.PendingReports</div>
                     <div class="stat-label">Pending Reports</div>
-
                 </div>
-
             </div>
 
         </div>
@@ -95,9 +68,7 @@
         <div class="row g-4">
 
             <div class="col-md-6 col-lg-3">
-
                 <div class="custom-card" id="products">
-
                     <div class="category-icon">
                         <i class="bi bi-box-seam"></i>
                     </div>
@@ -112,15 +83,11 @@
                     <a href="#products" class="btn btn-outline-custom w-100">
                         Manage Products
                     </a>
-
                 </div>
-
             </div>
 
             <div class="col-md-6 col-lg-3">
-
                 <div class="custom-card" id="categories">
-
                     <div class="category-icon">
                         <i class="bi bi-grid"></i>
                     </div>
@@ -135,15 +102,11 @@
                     <a href="#categories" class="btn btn-outline-custom w-100">
                         Manage Categories
                     </a>
-
                 </div>
-
             </div>
 
             <div class="col-md-6 col-lg-3">
-
                 <div class="custom-card" id="areas">
-
                     <div class="category-icon">
                         <i class="bi bi-geo-alt"></i>
                     </div>
@@ -158,15 +121,11 @@
                     <a href="#areas" class="btn btn-outline-custom w-100">
                         Manage Areas
                     </a>
-
                 </div>
-
             </div>
 
             <div class="col-md-6 col-lg-3">
-
                 <div class="custom-card" id="reports">
-
                     <div class="category-icon">
                         <i class="bi bi-clipboard-check"></i>
                     </div>
@@ -181,9 +140,7 @@
                     <a href="#reports-table" class="btn btn-primary-custom w-100">
                         Review Reports
                     </a>
-
                 </div>
-
             </div>
 
         </div>
@@ -191,127 +148,178 @@
         <div class="custom-card mt-5" id="reports-table">
 
             <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-4">
-
                 <h4 class="fw-bold text-primary mb-0">
-                    Recent Price Reports
+                    Pending Price Reports
                 </h4>
 
-                <span class="badge status-pending p-2">
-                    7 Pending
+                <span class="badge status-pending p-2 pending-count">
+                    @Model.PendingReports Pending
                 </span>
-
             </div>
 
             <div class="table-responsive">
-
                 <table class="table align-middle">
-
                     <thead>
-
                         <tr>
-                            <th>Product</th>
-                            <th>Shop</th>
-                            <th>Reported By</th>
+                            <th>Report ID</th>
+                            <th>Product ID</th>
+                            <th>Shop ID</th>
+                            <th>User ID</th>
                             <th>Price</th>
+                            <th>Report Date</th>
                             <th>Status</th>
+                            <th>Actions</th>
                         </tr>
-
                     </thead>
 
                     <tbody>
+                        @if (Model.PendingPriceReports.Count == 0)
+                        {
+                            <tr>
+                                <td colspan="8" class="text-center text-secondary py-4">
+                                    No pending price reports.
+                                </td>
+                            </tr>
+                        }
+                        else
+                        {
+                            @foreach (var report in Model.PendingPriceReports)
+                            {
+                                <tr>
+                                    <td>@report.ReportId</td>
+                                    <td>@report.ProductId</td>
+                                    <td>@report.ShopId</td>
+                                    <td>@report.UserId</td>
+                                    <td>Rs. @report.Price.ToString("N2")</td>
+                                    <td>@report.ReportDate.ToString("dd MMM yyyy")</td>
+                                    <td>
+                                        <span class="badge status-pending">
+                                            @report.Status
+                                        </span>
+                                    </td>
+                                    <td>
+                                        <div class="d-flex gap-2">
+                                            <form method="post"
+                                                  action="@Url.Action("UpdatePriceReportStatus", "Admin")"
+                                                  class="review-form">
+                                                @Html.AntiForgeryToken()
+                                                <input type="hidden" name="reportId" value="@report.ReportId" />
+                                                <input type="hidden" name="status" value="Approved" />
+                                                <button type="submit" class="btn btn-sm btn-success">
+                                                    Approve
+                                                </button>
+                                            </form>
 
-                        <tr>
-
-                            <td>Wheat Flour</td>
-
-                            <td>City Mart</td>
-
-                            <td>Ali</td>
-
-                            <td>Rs. 150</td>
-
-                            <td>
-                                <span class="badge status-pending">
-                                    Pending
-                                </span>
-                            </td>
-
-                        </tr>
-
-                        <tr>
-
-                            <td>Sugar</td>
-
-                            <td>Local Store</td>
-
-                            <td>Ahmed</td>
-
-                            <td>Rs. 175</td>
-
-                            <td>
-                                <span class="badge status-approved">
-                                    Approved
-                                </span>
-                            </td>
-
-                        </tr>
-
-                        <tr>
-
-                            <td>Cooking Oil</td>
-
-                            <td>Fresh Mart</td>
-
-                            <td>Sara</td>
-
-                            <td>Rs. 560</td>
-
-                            <td>
-                                <span class="badge status-pending">
-                                    Pending
-                                </span>
-                            </td>
-
-                        </tr>
-
-                        <tr>
-
-                            <td>Chicken</td>
-
-                            <td>Market Shop</td>
-
-                            <td>Usman</td>
-
-                            <td>Rs. 620</td>
-
-                            <td>
-                                <span class="badge status-rejected">
-                                    Rejected
-                                </span>
-                            </td>
-
-                        </tr>
-
+                                            <form method="post"
+                                                  action="@Url.Action("UpdatePriceReportStatus", "Admin")"
+                                                  class="review-form">
+                                                @Html.AntiForgeryToken()
+                                                <input type="hidden" name="reportId" value="@report.ReportId" />
+                                                <input type="hidden" name="status" value="Rejected" />
+                                                <button type="submit" class="btn btn-sm btn-danger">
+                                                    Reject
+                                                </button>
+                                            </form>
+                                        </div>
+                                    </td>
+                                </tr>
+                            }
+                        }
                     </tbody>
-
                 </table>
-
             </div>
 
-            <p class="small text-secondary mb-0">
-                Sample records displayed for the static dashboard.
-            </p>
+        </div>
+
+        <div class="custom-card mt-5" id="shop-suggestions">
+
+            <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-4">
+                <h4 class="fw-bold text-primary mb-0">
+                    Pending Shop Suggestions
+                </h4>
+
+                <span class="badge status-pending p-2 pending-count">
+                    @Model.PendingShops.Count Pending
+                </span>
+            </div>
+
+            <div class="table-responsive">
+                <table class="table align-middle">
+                    <thead>
+                        <tr>
+                            <th>Shop ID</th>
+                            <th>Shop Name</th>
+                            <th>Area ID</th>
+                            <th>Suggested By</th>
+                            <th>Date</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+                        @if (Model.PendingShops.Count == 0)
+                        {
+                            <tr>
+                                <td colspan="7" class="text-center text-secondary py-4">
+                                    No pending shop suggestions.
+                                </td>
+                            </tr>
+                        }
+                        else
+                        {
+                            @foreach (var shop in Model.PendingShops)
+                            {
+                                <tr>
+                                    <td>@shop.ShopId</td>
+                                    <td>@shop.Name</td>
+                                    <td>@shop.AreaId</td>
+                                    <td>@shop.SuggestedByUserId</td>
+                                    <td>@shop.CreatedAt.ToString("dd MMM yyyy")</td>
+                                    <td>
+                                        <span class="badge status-pending">
+                                            @shop.Status
+                                        </span>
+                                    </td>
+                                    <td>
+                                        <div class="d-flex gap-2">
+                                            <form method="post"
+                                                  action="@Url.Action("UpdateShopStatus", "Admin")"
+                                                  class="review-form">
+                                                @Html.AntiForgeryToken()
+                                                <input type="hidden" name="shopId" value="@shop.ShopId" />
+                                                <input type="hidden" name="status" value="Approved" />
+                                                <button type="submit" class="btn btn-sm btn-success">
+                                                    Approve
+                                                </button>
+                                            </form>
+
+                                            <form method="post"
+                                                  action="@Url.Action("UpdateShopStatus", "Admin")"
+                                                  class="review-form">
+                                                @Html.AntiForgeryToken()
+                                                <input type="hidden" name="shopId" value="@shop.ShopId" />
+                                                <input type="hidden" name="status" value="Rejected" />
+                                                <button type="submit" class="btn btn-sm btn-danger">
+                                                    Reject
+                                                </button>
+                                            </form>
+                                        </div>
+                                    </td>
+                                </tr>
+                            }
+                        }
+                    </tbody>
+                </table>
+            </div>
 
         </div>
 
     </div>
-
 </section>
 
 <footer class="footer">
-
     <div class="container text-center">
-
         <h5 class="fw-bold">
             MolTol<span class="brand-dot">.</span>
         </h5>
@@ -323,7 +331,84 @@
         <p class="small mt-3">
             &copy; @DateTime.Now.Year MolTol. All Rights Reserved.
         </p>
-
     </div>
-
 </footer>
+
+@section Scripts {
+    <script>
+        document.addEventListener("submit", async function (event) {
+            const form = event.target;
+
+            if (!form.classList.contains("review-form")) {
+                return;
+            }
+
+            event.preventDefault();
+
+            const button = event.submitter;
+            const buttons = form.closest("tr").querySelectorAll("button");
+
+            buttons.forEach(item => item.disabled = true);
+
+            try {
+                const formData = new FormData(form);
+                const token = form.querySelector(
+                    'input[name="__RequestVerificationToken"]'
+                ).value;
+
+                const response = await fetch(form.action, {
+                    method: "POST",
+                    headers: {
+                        "RequestVerificationToken": token
+                    },
+                    body: formData
+                });
+
+                const result = await response.json();
+
+                if (!response.ok || !result.success) {
+                    throw new Error(result.message || "Unable to update record.");
+                }
+
+                const row = form.closest("tr");
+                const table = form.closest(".custom-card");
+
+                row.remove();
+
+                const countBadge = table.querySelector(".pending-count");
+                const currentCount = parseInt(countBadge.textContent) || 0;
+                const newCount = Math.max(0, currentCount - 1);
+
+                countBadge.textContent = `${newCount} Pending`;
+
+                if (table.id === "reports-table") {
+                    const pendingStat = document.getElementById("pendingReportsCount");
+                    const currentPending = parseInt(pendingStat.textContent) || 0;
+
+                    pendingStat.textContent = Math.max(0, currentPending - 1);
+                }
+
+                const tbody = table.querySelector("tbody");
+
+                if (tbody.querySelectorAll("tr").length === 0) {
+                    const emptyRow = document.createElement("tr");
+                    const emptyCell = document.createElement("td");
+
+                    emptyCell.colSpan = table.id === "reports-table" ? 8 : 7;
+                    emptyCell.className = "text-center text-secondary py-4";
+                    emptyCell.textContent = table.id === "reports-table"
+                        ? "No pending price reports."
+                        : "No pending shop suggestions.";
+
+                    emptyRow.appendChild(emptyCell);
+                    tbody.appendChild(emptyRow);
+                }
+
+                alert(result.message);
+            } catch (error) {
+                alert(error.message);
+                buttons.forEach(item => item.disabled = false);
+            }
+        });
+    </script>
+}

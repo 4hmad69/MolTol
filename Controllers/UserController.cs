@@ -14,15 +14,18 @@ public class UserController : Controller
     private readonly IPriceReportRepository _priceReportRepository;
     private readonly IProductRepository _productRepository;
     private readonly IShopRepository _shopRepository;
+    private readonly IAreaRepository _areaRepository;
 
     public UserController(
         IPriceReportRepository priceReportRepository,
         IProductRepository productRepository,
-        IShopRepository shopRepository)
+        IShopRepository shopRepository,
+        IAreaRepository areaRepository)
     {
         _priceReportRepository = priceReportRepository;
         _productRepository = productRepository;
         _shopRepository = shopRepository;
+        _areaRepository = areaRepository;
     }
 
     [HttpGet]
@@ -39,6 +42,8 @@ public class UserController : Controller
         {
             TotalReports = await _priceReportRepository.CountByUserIdAsync(
                 userId,
+                cancellationToken: cancellationToken),
+            Areas = await _areaRepository.GetAllAsync(
                 cancellationToken: cancellationToken),
 
             ApprovedReports = await _priceReportRepository.CountByUserIdAsync(
@@ -133,6 +138,65 @@ public class UserController : Controller
         {
             success = true,
             message = "Price report submitted successfully. It is pending admin approval."
+        });
+    }
+
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> SuggestShop(
+        string shopName,
+        int areaId,
+        CancellationToken cancellationToken)
+    {
+        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+        if (string.IsNullOrEmpty(userId))
+        {
+            return Unauthorized(new
+            {
+                success = false,
+                message = "Please log in again."
+            });
+        }
+
+        shopName = shopName?.Trim() ?? string.Empty;
+
+        if (string.IsNullOrWhiteSpace(shopName) || shopName.Length > 150 || areaId <= 0)
+        {
+            return BadRequest(new
+            {
+                success = false,
+                message = "Please provide a valid shop name and area."
+            });
+        }
+
+        var area = await _areaRepository.GetByIdAsync(
+            areaId,
+            cancellationToken);
+
+        if (area is null || !area.IsActive)
+        {
+            return BadRequest(new
+            {
+                success = false,
+                message = "The selected area is unavailable."
+            });
+        }
+
+        var shop = new Shop
+        {
+            Name = shopName,
+            AreaId = areaId,
+            Status = "Pending",
+            SuggestedByUserId = userId
+        };
+
+        await _shopRepository.AddAsync(shop, cancellationToken);
+
+        return Ok(new
+        {
+            success = true,
+            message = "Shop suggestion submitted successfully. It is pending admin approval."
         });
     }
 }

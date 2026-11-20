@@ -150,36 +150,58 @@
             <div id="priceReportMessage" class="mt-3" role="alert"></div>
         </div>
 
+
         <div class="custom-card mt-4" id="shop-suggestion-form">
             <h5 class="fw-bold text-primary mb-3">
                 <i class="bi bi-shop me-2"></i>
                 Suggest a Local Shop
             </h5>
 
-            <form>
+            <form id="shopSuggestionForm">
+                @Html.AntiForgeryToken()
+
                 <div class="row g-3">
                     <div class="col-md-6">
-                        <label class="form-label">Shop Name</label>
+                        <label for="shopName" class="form-label">Shop Name</label>
 
-                        <input type="text" class="form-control"
-                               placeholder="Enter shop name" />
+                        <input type="text"
+                               id="shopName"
+                               name="shopName"
+                               class="form-control"
+                               maxlength="150"
+                               placeholder="Enter shop name"
+                               required />
                     </div>
 
                     <div class="col-md-6">
-                        <label class="form-label">Area</label>
+                        <label for="suggestedAreaId" class="form-label">Area</label>
 
-                        <input type="text" class="form-control"
-                               placeholder="Enter shop area" />
+                        <select id="suggestedAreaId"
+                                name="areaId"
+                                class="form-select"
+                                required>
+                            <option value="">Select area</option>
+
+                            @foreach (var area in Model.Areas)
+                            {
+                                <option value="@area.AreaId">@area.Name</option>
+                            }
+                        </select>
                     </div>
 
                     <div class="col-12">
-                        <button type="button" class="btn btn-primary-custom">
+                        <button type="button"
+                                id="submitShopSuggestion"
+                                class="btn btn-primary-custom">
                             Submit Shop Suggestion
                         </button>
                     </div>
                 </div>
             </form>
+
+            <div id="shopSuggestionMessage" class="mt-3" role="alert"></div>
         </div>
+
 
         <div class="custom-card mt-5" id="history">
             <h4 class="fw-bold text-primary mb-4">My Report History</h4>
@@ -307,6 +329,60 @@
             } finally {
                 submitPriceReport.disabled = false;
                 submitPriceReport.textContent = "Submit Price Report";
+            }
+        });
+
+        const shopSuggestionForm = document.getElementById("shopSuggestionForm");
+        const submitShopSuggestion = document.getElementById("submitShopSuggestion");
+        const shopSuggestionMessage = document.getElementById("shopSuggestionMessage");
+
+        submitShopSuggestion.addEventListener("click", async () => {
+            if (!shopSuggestionForm.reportValidity()) {
+                return;
+            }
+
+            const token = shopSuggestionForm.querySelector(
+                'input[name="__RequestVerificationToken"]'
+            ).value;
+
+            const formData = new FormData(shopSuggestionForm);
+
+            submitShopSuggestion.disabled = true;
+            submitShopSuggestion.textContent = "Submitting...";
+            shopSuggestionMessage.textContent = "";
+
+            try {
+                const response = await fetch(
+                    '@Url.Action("SuggestShop", "User")',
+                    {
+                        method: "POST",
+                        headers: {
+                            "RequestVerificationToken": token
+                        },
+                        body: formData
+                    }
+                );
+
+                const result = await response.json();
+
+                if (!response.ok) {
+                    throw new Error(result.message || "Unable to submit shop suggestion.");
+                }
+
+                shopSuggestionMessage.className = "alert alert-success mt-3";
+                shopSuggestionMessage.textContent = result.message;
+
+                shopSuggestionForm.reset();
+
+                setTimeout(() => {
+                    window.location.reload();
+                }, 1200);
+            } catch (error) {
+                shopSuggestionMessage.className = "alert alert-danger mt-3";
+                shopSuggestionMessage.textContent = error.message;
+            } finally {
+                submitShopSuggestion.disabled = false;
+                submitShopSuggestion.textContent = "Submit Shop Suggestion";
             }
         });
     </script>
