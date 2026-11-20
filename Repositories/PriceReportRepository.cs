@@ -194,4 +194,53 @@ public class PriceReportRepository : IPriceReportRepository
                 },
                 cancellationToken: cancellationToken));
     }
+    public async Task<IReadOnlyList<PriceComparisonItem>> GetApprovedComparisonsAsync(
+        int? categoryId = null,
+        int? areaId = null,
+        string? searchTerm = null,
+        CancellationToken cancellationToken = default)
+    {
+        const string sql = """
+        SELECT
+            pr.ReportId,
+            p.Name AS ProductName,
+            p.Unit,
+            s.Name AS ShopName,
+            a.Name AS AreaName,
+            pr.Price,
+            pr.ReportDate
+        FROM PriceReports pr
+        INNER JOIN Products p ON pr.ProductId = p.ProductId
+        INNER JOIN Shops s ON pr.ShopId = s.ShopId
+        INNER JOIN Areas a ON s.AreaId = a.AreaId
+        INNER JOIN Categories c ON p.CategoryId = c.CategoryId
+        WHERE pr.Status = 'Approved'
+          AND s.Status = 'Approved'
+          AND p.IsActive = 1
+          AND c.IsActive = 1
+          AND a.IsActive = 1
+          AND (@CategoryId IS NULL OR p.CategoryId = @CategoryId)
+          AND (@AreaId IS NULL OR s.AreaId = @AreaId)
+          AND (@SearchTerm IS NULL OR p.Name LIKE '%' + @SearchTerm + '%')
+        ORDER BY pr.ReportDate DESC;
+        """;
+
+        await using var connection = _connectionFactory.CreateConnection();
+
+        var results = await connection.QueryAsync<PriceComparisonItem>(
+            new CommandDefinition(
+                sql,
+                new
+                {
+                    CategoryId = categoryId,
+                    AreaId = areaId,
+                    SearchTerm = string.IsNullOrWhiteSpace(searchTerm)
+                        ? null
+                        : searchTerm.Trim()
+                },
+                cancellationToken: cancellationToken));
+
+        return results.ToList();
+    }
+
 }

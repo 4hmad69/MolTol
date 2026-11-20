@@ -1,32 +1,72 @@
+
 using System.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
+using MolTol.Interfaces;
 using MolTol.Models;
+using MolTol.Models.ViewModels;
 
-namespace MolTol.Controllers
+namespace MolTol.Controllers;
+
+public class HomeController : Controller
 {
-    public class HomeController : Controller
+    private readonly ILogger<HomeController> _logger;
+    private readonly ICategoryRepository _categoryRepository;
+    private readonly IAreaRepository _areaRepository;
+    private readonly IPriceReportRepository _priceReportRepository;
+
+    public HomeController(
+        ILogger<HomeController> logger,
+        ICategoryRepository categoryRepository,
+        IAreaRepository areaRepository,
+        IPriceReportRepository priceReportRepository)
     {
-        private readonly ILogger<HomeController> _logger;
+        _logger = logger;
+        _categoryRepository = categoryRepository;
+        _areaRepository = areaRepository;
+        _priceReportRepository = priceReportRepository;
+    }
 
-        public HomeController(ILogger<HomeController> logger)
+    public async Task<IActionResult> Index(CancellationToken cancellationToken)
+    {
+        var model = new HomePageViewModel
         {
-            _logger = logger;
-        }
+            Categories = await _categoryRepository.GetAllAsync(
+                cancellationToken: cancellationToken),
 
-        public IActionResult Index()
-        {
-            return View();
-        }
+            Areas = await _areaRepository.GetAllAsync(
+                cancellationToken: cancellationToken)
+        };
 
-        public IActionResult Privacy()
-        {
-            return View();
-        }
+        return View(model);
+    }
 
-        [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
-        public IActionResult Error()
+    [HttpGet]
+    public async Task<IActionResult> GetPriceComparisons(
+        int? categoryId,
+        int? areaId,
+        string? searchTerm,
+        CancellationToken cancellationToken)
+    {
+        var results = await _priceReportRepository.GetApprovedComparisonsAsync(
+            categoryId,
+            areaId,
+            searchTerm,
+            cancellationToken);
+
+        return Json(results);
+    }
+
+    public IActionResult Privacy()
+    {
+        return View();
+    }
+
+    [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
+    public IActionResult Error()
+    {
+        return View(new ErrorViewModel
         {
-            return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
-        }
+            RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier
+        });
     }
 }

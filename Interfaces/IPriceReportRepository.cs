@@ -1,5 +1,6 @@
 ﻿
 using MolTol.Models;
+
 namespace MolTol.Interfaces;
 
 public interface IPriceReportRepository
@@ -32,5 +33,11 @@ public interface IPriceReportRepository
     Task<int> CountByUserIdAsync(
         string userId,
         string? status = null,
+        CancellationToken cancellationToken = default);
+
+    Task<IReadOnlyList<PriceComparisonItem>> GetApprovedComparisonsAsync(
+        int? categoryId = null,
+        int? areaId = null,
+        string? searchTerm = null,
         CancellationToken cancellationToken = default);
 }

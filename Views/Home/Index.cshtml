@@ -1,17 +1,15 @@
-﻿@{
+﻿@model MolTol.Models.ViewModels.HomePageViewModel
+
+@{
     ViewData["Title"] = "Compare Local Market Prices";
 }
 
 @await Html.PartialAsync("_PublicNavbar")
 
 <section class="hero-section">
-
     <div class="container">
-
         <div class="row align-items-center g-5">
-
             <div class="col-lg-7">
-
                 <span class="badge rounded-pill text-bg-light p-2 mb-3">
                     Smart Shopping Starts Here
                 </span>
@@ -29,7 +27,6 @@
                 </p>
 
                 <div class="d-flex flex-wrap gap-3 mt-4">
-
                     <a href="#prices" class="btn btn-primary-custom">
                         Explore Prices
                         <i class="bi bi-arrow-right ms-1"></i>
@@ -39,20 +36,16 @@
                        class="btn btn-outline-custom">
                         Join MolTol
                     </a>
-
                 </div>
 
                 <p class="text-secondary mt-4 small">
                     <i class="bi bi-check-circle-fill text-primary me-2"></i>
                     Compare everyday essentials across local shops.
                 </p>
-
             </div>
 
             <div class="col-lg-5">
-
                 <div class="custom-card p-4">
-
                     <h5 class="fw-bold mb-3">
                         <i class="bi bi-geo-alt-fill text-primary me-2"></i>
                         Find Prices Near You
@@ -62,155 +55,120 @@
                         Select your area to explore local market prices.
                     </p>
 
-                    <label class="form-label">Select Your Area</label>
+                    <label for="areaFilter" class="form-label">Select Your Area</label>
 
-                    <select class="form-select mb-3">
-                        <option selected disabled>Choose an area</option>
-                        <option>Johar Town</option>
-                        <option>Model Town</option>
-                        <option>Garden Town</option>
-                        <option>Gulberg</option>
+                    <select id="areaFilter" class="form-select mb-3">
+                        <option value="">All Areas</option>
+                        @foreach (var area in Model.Areas)
+                        {
+                            <option value="@area.AreaId">@area.Name</option>
+                        }
                     </select>
 
                     <a href="#prices" class="btn btn-primary-custom w-100">
                         Explore Market Prices
                     </a>
-
-                    <p class="small text-secondary mt-3 mb-0">
-                        <i class="bi bi-info-circle me-1"></i>
-                        Sample interface for demonstration.
-                    </p>
-
                 </div>
-
             </div>
-
         </div>
-
     </div>
-
 </section>
 
 <section class="section-padding" id="categories">
-
     <div class="container">
-
         <div class="text-center mb-5">
-
             <h2 class="section-title">Explore Product Categories</h2>
-
             <p class="section-subtitle">
                 Find prices for your everyday household essentials.
             </p>
-
         </div>
 
         <div class="row g-4">
+            @if (Model.Categories.Any())
+            {
+                @foreach (var category in Model.Categories)
+                {
+                    var icon = category.Name.ToLowerInvariant() switch
+                    {
+                        "flour & grains" => "bi-basket2",
+                        "cooking essentials" => "bi-droplet",
+                        "dairy & eggs" => "bi-egg",
+                        "fruits & vegetables" => "bi-apple",
+                        "meat & poultry" => "bi-egg-fried",
+                        "beverages" => "bi-cup-hot",
+                        "household items" => "bi-house",
+                        _ => "bi-box-seam"
+                    };
 
-            <div class="col-6 col-md-4 col-lg-3">
-                <div class="custom-card text-center">
-                    <div class="category-icon mx-auto">
-                        <i class="bi bi-basket2"></i>
-                    </div>
-                    <h6 class="fw-bold">Flour & Grains</h6>
-                    <p class="small text-secondary mb-0">Atta, rice and pulses</p>
+                    <div class="col-6 col-md-4 col-lg-3">
+                        <div class="custom-card text-center h-100">
+                            <div class="category-icon mx-auto">
+                                <i class="bi @icon"></i>
+                            </div>
+                            <h6 class="fw-bold">@category.Name</h6>
+                            <p class="small text-secondary mb-0">
+                                @(string.IsNullOrWhiteSpace(category.Description)
+                                                        ? "Explore products"
+                                                        : category.Description)
+                    </p>
                 </div>
             </div>
-
-            <div class="col-6 col-md-4 col-lg-3">
-                <div class="custom-card text-center">
-                    <div class="category-icon mx-auto">
-                        <i class="bi bi-droplet"></i>
-                    </div>
-                    <h6 class="fw-bold">Cooking Essentials</h6>
-                    <p class="small text-secondary mb-0">Oil, ghee and sugar</p>
+                        }
+            }
+            else
+            {
+                <div class="col-12 text-center">
+                    <p class="text-secondary">
+                        No product categories are available yet.
+                    </p>
                 </div>
-            </div>
-
-            <div class="col-6 col-md-4 col-lg-3">
-                <div class="custom-card text-center">
-                    <div class="category-icon mx-auto">
-                        <i class="bi bi-egg"></i>
-                    </div>
-                    <h6 class="fw-bold">Dairy & Eggs</h6>
-                    <p class="small text-secondary mb-0">Milk, eggs and yogurt</p>
-                </div>
-            </div>
-
-            <div class="col-6 col-md-4 col-lg-3">
-                <div class="custom-card text-center">
-                    <div class="category-icon mx-auto">
-                        <i class="bi bi-apple"></i>
-                    </div>
-                    <h6 class="fw-bold">Fruits & Vegetables</h6>
-                    <p class="small text-secondary mb-0">Fresh seasonal produce</p>
-                </div>
-            </div>
-
-            <div class="col-6 col-md-4 col-lg-3">
-                <div class="custom-card text-center">
-                    <div class="category-icon mx-auto">
-                        <i class="bi bi-egg-fried"></i>
-                    </div>
-                    <h6 class="fw-bold">Meat & Poultry</h6>
-                    <p class="small text-secondary mb-0">Chicken and meat</p>
-                </div>
-            </div>
-
-            <div class="col-6 col-md-4 col-lg-3">
-                <div class="custom-card text-center">
-                    <div class="category-icon mx-auto">
-                        <i class="bi bi-cup-hot"></i>
-                    </div>
-                    <h6 class="fw-bold">Beverages</h6>
-                    <p class="small text-secondary mb-0">Tea, coffee and drinks</p>
-                </div>
-            </div>
-
-            <div class="col-6 col-md-4 col-lg-3">
-                <div class="custom-card text-center">
-                    <div class="category-icon mx-auto">
-                        <i class="bi bi-house"></i>
-                    </div>
-                    <h6 class="fw-bold">Household Items</h6>
-                    <p class="small text-secondary mb-0">Cleaning and home supplies</p>
-                </div>
-            </div>
-
-            <div class="col-6 col-md-4 col-lg-3">
-                <div class="custom-card text-center">
-                    <div class="category-icon mx-auto">
-                        <i class="bi bi-box-seam"></i>
-                    </div>
-                    <h6 class="fw-bold">Other Essentials</h6>
-                    <p class="small text-secondary mb-0">Everyday necessities</p>
-                </div>
-            </div>
-
+            }
         </div>
-
     </div>
-
 </section>
 
 <section class="section-padding bg-white" id="prices">
-
     <div class="container">
-
         <div class="text-center mb-5">
-
             <h2 class="section-title">Compare Local Market Prices</h2>
-
             <p class="section-subtitle">
-                A preview of how MolTol helps compare everyday products.
+                Compare everyday products across local markets.
             </p>
+        </div>
 
+        <div class="row g-3 mb-4">
+            <div class="col-md-4">
+                <label for="searchInput" class="form-label">Search Product</label>
+                <input type="text" id="searchInput"
+                       class="form-control"
+                       placeholder="Enter product name..." />
+            </div>
+
+            <div class="col-md-4">
+                <label for="categoryFilter" class="form-label">Category</label>
+                <select id="categoryFilter" class="form-select">
+                    <option value="">All Categories</option>
+                    @foreach (var category in Model.Categories)
+                    {
+                        <option value="@category.CategoryId">@category.Name</option>
+                    }
+                </select>
+            </div>
+
+            <div class="col-md-4">
+                <label for="priceAreaFilter" class="form-label">Area</label>
+                <select id="priceAreaFilter" class="form-select">
+                    <option value="">All Areas</option>
+                    @foreach (var area in Model.Areas)
+                    {
+                        <option value="@area.AreaId">@area.Name</option>
+                    }
+                </select>
+            </div>
         </div>
 
         <div class="table-responsive">
-
             <table class="table table-bordered bg-white align-middle">
-
                 <thead>
                     <tr>
                         <th>Product</th>
@@ -219,58 +177,134 @@
                         <th>Price</th>
                     </tr>
                 </thead>
-
-                <tbody>
-
+                <tbody id="priceTableBody">
                     <tr>
-                        <td>Wheat Flour (1kg)</td>
-                        <td>Local Grocery Store</td>
-                        <td>Johar Town</td>
-                        <td class="price">Rs. 150</td>
+                        <td colspan="4" class="text-center text-secondary">
+                            Loading prices...
+                        </td>
                     </tr>
-
-                    <tr>
-                        <td>Sugar (1kg)</td>
-                        <td>City Mart</td>
-                        <td>Model Town</td>
-                        <td class="price">Rs. 175</td>
-                    </tr>
-
-                    <tr>
-                        <td>Cooking Oil (1L)</td>
-                        <td>Fresh Mart</td>
-                        <td>Gulberg</td>
-                        <td class="price">Rs. 560</td>
-                    </tr>
-
-                    <tr>
-                        <td>Chicken (1kg)</td>
-                        <td>Local Meat Shop</td>
-                        <td>Garden Town</td>
-                        <td class="price">Rs. 620</td>
-                    </tr>
-
                 </tbody>
-
             </table>
-
         </div>
 
-        <p class="text-secondary small text-center mt-3">
-            These prices are illustrative examples for the static website.
-        </p>
-
         <div class="text-center mt-4">
-
             <a asp-area="Identity" asp-page="/Account/Register"
                class="btn btn-primary-custom">
                 Create Account to Participate
             </a>
-
         </div>
-
     </div>
-
 </section>
 
 @await Html.PartialAsync("_PublicFooter")
+
+@section Scripts {
+    <script>
+        const priceEndpoint = '@Url.Action("GetPriceComparisons", "Home")';
+
+        const searchInput = document.getElementById("searchInput");
+        const categoryFilter = document.getElementById("categoryFilter");
+        const areaFilter = document.getElementById("areaFilter");
+        const priceAreaFilter = document.getElementById("priceAreaFilter");
+        const priceTableBody = document.getElementById("priceTableBody");
+
+        function showMessage(message) {
+            priceTableBody.replaceChildren();
+
+            const row = document.createElement("tr");
+            const cell = document.createElement("td");
+
+            cell.colSpan = 4;
+            cell.className = "text-center text-secondary";
+            cell.textContent = message;
+
+            row.appendChild(cell);
+            priceTableBody.appendChild(row);
+        }
+
+        function displayPrices(prices) {
+            priceTableBody.replaceChildren();
+
+            if (prices.length === 0) {
+                showMessage("No approved prices found for these filters.");
+                return;
+            }
+
+            prices.forEach(item => {
+                const row = document.createElement("tr");
+
+                const productCell = document.createElement("td");
+                productCell.textContent = `${item.productName} (${item.unit})`;
+
+                const shopCell = document.createElement("td");
+                shopCell.textContent = item.shopName;
+
+                const areaCell = document.createElement("td");
+                areaCell.textContent = item.areaName;
+
+                const priceCell = document.createElement("td");
+                priceCell.className = "price";
+                priceCell.textContent = `Rs. ${Number(item.price).toFixed(2)}`;
+
+                row.append(productCell, shopCell, areaCell, priceCell);
+                priceTableBody.appendChild(row);
+            });
+        }
+
+        async function loadPrices() {
+            showMessage("Loading prices...");
+
+            const parameters = new URLSearchParams();
+
+            const searchTerm = searchInput.value.trim();
+            const categoryId = categoryFilter.value;
+            const areaId = priceAreaFilter.value || areaFilter.value;
+
+            if (searchTerm) {
+                parameters.append("searchTerm", searchTerm);
+            }
+
+            if (categoryId) {
+                parameters.append("categoryId", categoryId);
+            }
+
+            if (areaId) {
+                parameters.append("areaId", areaId);
+            }
+
+            try {
+                const response = await fetch(`${priceEndpoint}?${parameters}`);
+
+                if (!response.ok) {
+                    throw new Error("Unable to load market prices.");
+                }
+
+                const prices = await response.json();
+                displayPrices(prices);
+            } catch {
+                showMessage("Something went wrong while loading prices. Please try again.");
+            }
+        }
+
+        let searchTimeout;
+
+        searchInput.addEventListener("input", () => {
+            clearTimeout(searchTimeout);
+            searchTimeout = setTimeout(loadPrices, 400);
+        });
+
+        categoryFilter.addEventListener("change", loadPrices);
+
+        priceAreaFilter.addEventListener("change", () => {
+            areaFilter.value = priceAreaFilter.value;
+            loadPrices();
+        });
+
+        areaFilter.addEventListener("change", () => {
+            priceAreaFilter.value = areaFilter.value;
+            loadPrices();
+        });
+
+        loadPrices();
+    </script>
+}
